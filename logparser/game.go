@@ -111,5 +111,5 @@ func (e *Event) String() string {
 		event = fmt.Sprintf("Map set to %s", mapE.GetMapName())
 	}
 
-	return fmt.Sprintf("%d - %s", e.Time, event)
+	return fmt.Sprintf("t+%dms - %s", e.Time-e.game.Data.GameTime, event)
 }
