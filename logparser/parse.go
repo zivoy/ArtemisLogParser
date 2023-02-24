@@ -15,8 +15,8 @@ var magic = []byte{0x89, 0x41, 0x52, 0x54}
 
 func readBytes(reader io.Reader, n int) ([]byte, error) {
 	bytes := make([]byte, n)
-	n, err := reader.Read(bytes)
-	return bytes[:n], err
+	read, err := reader.Read(bytes)
+	return bytes[:read], err
 }
 
 func isLogFile(reader io.Reader) bool {
