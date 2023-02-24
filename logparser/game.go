@@ -27,12 +27,31 @@ func newGame() *Game {
 }
 
 func (g *Game) appendEvent(events *pb.AnalyticsEvent) {
-	eventList := make([]*Event, 0)
 	for _, e := range events.GetEvents() {
-		eventList = append(eventList, &Event{Time: events.GetEventTine(), Event: e, game: g})
+		g.Events = append(g.Events, &Event{Time: events.GetEventTine(), Event: e, game: g})
 
 		switch e.GetEvent().(type) {
 		case *pb.AnalyticsEvent_Event_Object:
+			object := e.GetObject()
+			var lastObject *pb.ObjectEvent
+			for i := len(g.Events) - 1; i > 0; i-- {
+				event := g.Events[i].Event
+				switch event.GetEvent().(type) {
+				case *pb.AnalyticsEvent_Event_Object:
+					lastObject = event.GetObject()
+					break
+				}
+			}
+
+			if object.GetPosition() == nil {
+				object.Position = lastObject.Position
+			}
+			if object.GetRotation() == nil {
+				object.Rotation = lastObject.Rotation
+			}
+			if object.GetScripts() == nil {
+				object.Scripts = lastObject.Scripts
+			}
 			// todo updated lookup
 
 		case *pb.AnalyticsEvent_Event_Item:
@@ -44,8 +63,6 @@ func (g *Game) appendEvent(events *pb.AnalyticsEvent) {
 		case *pb.AnalyticsEvent_Event_Map:
 		}
 	}
-
-	g.Events = append(g.Events, eventList...)
 }
 
 func (g *Game) LookupID(id int32) string {
@@ -76,7 +93,9 @@ func (e *Event) String() string {
 		for _, script := range object.GetScripts() {
 			scripts = fmt.Sprintf("Script \"%s\" Data: \"%s\",", e.game.LookupID(script.GetId()), script.GetData())
 		}
-		scripts = scripts[:len(scripts)-1]
+		if len(scripts) > 0 {
+			scripts = scripts[:len(scripts)-1]
+		}
 
 		position := object.GetPosition()
 		pos := fmt.Sprintf("{ X:%f Y:%f Z:%f }", position.X, position.Y, position.Z)
