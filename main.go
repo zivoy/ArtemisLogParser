@@ -4,10 +4,29 @@ import (
 	"artemisLogParser/logparser"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
-	r, _ := os.Open("C:\\Users\\zivno\\Documents\\3d game design\\gameDesign\\GameJamJan21\\GameLogs\\log-2023-02-24T10.13.26.artemis")
-	defer r.Close()
-	fmt.Println(logparser.Read(r))
+	args := os.Args[1:]
+	if len(args) == 0 {
+		fmt.Println("File path required")
+		return
+	}
+
+	r, err := os.Open(strings.Join(args, " "))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	g, err := logparser.Read(r)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(g)
+	err = r.Close()
+	if err != nil {
+		println(err)
+	}
 }
