@@ -3,20 +3,26 @@ package logparser
 import (
 	pb "artemisLogParser/protobuf"
 	"fmt"
+	"time"
 )
 
 type Game struct {
-	Data   *pb.Game
+	Data   *Data
 	Events []*Event
 
 	items map[int32]string
 }
 
 type Event struct {
-	Time  int64
+	Time  time.Time
 	Event *pb.AnalyticsEvent_Event
 
 	game *Game
+}
+
+type Data struct {
+	*pb.Game
+	Time time.Time
 }
 
 func newGame() *Game {
@@ -26,9 +32,17 @@ func newGame() *Game {
 	}
 }
 
+func newData(game *pb.Game) *Data {
+	return &Data{
+		Game: game,
+		Time: time.UnixMilli(game.GetGameTime()),
+	}
+}
+
 func (g *Game) appendEvent(events *pb.AnalyticsEvent) {
 	for _, e := range events.GetEvents() {
-		g.Events = append(g.Events, &Event{Time: events.GetEventTine(), Event: e, game: g})
+		eventTime := time.UnixMilli(events.GetEventTine())
+		g.Events = append(g.Events, &Event{Time: eventTime, Event: e, game: g})
 
 		switch e.GetEvent().(type) {
 		case *pb.AnalyticsEvent_Event_Object:
@@ -71,8 +85,8 @@ func (g *Game) LookupID(id int32) string {
 }
 
 func (g *Game) String() string {
-	str := fmt.Sprintf("Game Version:\t\t%s\nAnalytics Version:\t%s\nTime:\t\t\t%d\nMetadata:\t\t\"%s\"\n",
-		g.Data.GameVersion, g.Data.AnalyticsVersion, g.Data.GameTime, g.Data.Metadata)
+	str := fmt.Sprintf("Game Version:\t\t%s\nAnalytics Version:\t%s\nTime:\t\t\t%s\nMetadata:\t\t\"%s\"\n",
+		g.Data.GameVersion, g.Data.AnalyticsVersion, g.Data.Time, g.Data.Metadata)
 
 	str += "Events:\n"
 	for _, event := range g.Events {
@@ -130,5 +144,5 @@ func (e *Event) String() string {
 		event = fmt.Sprintf("Map set to %s", mapE.GetMapName())
 	}
 
-	return fmt.Sprintf("t+%dms - %s", e.Time-e.game.Data.GameTime, event)
+	return fmt.Sprintf("t+%s - %s", e.Time.Sub(e.game.Data.Time), event)
 }

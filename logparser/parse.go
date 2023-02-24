@@ -43,7 +43,7 @@ func Read(file *os.File) (*Game, error) {
 	if err != nil {
 		return nil, err
 	}
-	game.Data = data
+	game.Data = newData(data)
 
 	for {
 		event, err := readEvent(file)
