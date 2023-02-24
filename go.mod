@@ -1,4 +1,4 @@
-module artemisLogParser
+module github.com/zivoy/ArtemisLogParser
 
 go 1.19
 

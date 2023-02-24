@@ -1,8 +1,8 @@
 package main
 
 import (
-	"artemisLogParser/logparser"
 	"fmt"
+	"github.com/zivoy/ArtemisLogParser/logparser"
 	"os"
 	"strings"
 )

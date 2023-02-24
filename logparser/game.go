@@ -1,8 +1,8 @@
 package logparser
 
 import (
-	pb "artemisLogParser/protobuf"
 	"fmt"
+	pb "github.com/zivoy/ArtemisLogParser/protobuf"
 	"time"
 )
 

@@ -8,7 +8,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	pb "artemisLogParser/protobuf"
+	pb "github.com/zivoy/ArtemisLogParser/protobuf"
 )
 
 var magic = []byte{0x89, 0x41, 0x52, 0x54}
