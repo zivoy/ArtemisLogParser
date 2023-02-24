@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 
 	pb "artemisLogParser/protobuf"
 )
