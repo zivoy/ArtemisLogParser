@@ -78,8 +78,13 @@ func (e *Event) String() string {
 		}
 		scripts = scripts[:len(scripts)-1]
 
-		event = fmt.Sprintf("Object \"%s\" pos: { %s } rot: { %s } scripts: [%s]",
-			e.game.LookupID(object.GetId()), object.GetPosition(), object.GetRotation(), scripts)
+		position := object.GetPosition()
+		pos := fmt.Sprintf("{ X:%f Y:%f Z:%f }", position.X, position.Y, position.Z)
+		rotation := object.GetRotation()
+		rot := fmt.Sprintf("{ W:%f X:%f Y:%f Z:%f }", rotation.W, rotation.X, rotation.Y, rotation.Z)
+
+		event = fmt.Sprintf("Object \"%s\" pos: %s rot: %s scripts: [%s]",
+			e.game.LookupID(object.GetId()), pos, rot, scripts)
 
 	case *pb.AnalyticsEvent_Event_Item:
 		item := e.Event.GetItem()
