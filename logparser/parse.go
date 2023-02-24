@@ -3,7 +3,6 @@ package logparser
 import (
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 
@@ -33,33 +32,29 @@ func isLogFile(reader io.Reader) bool {
 	return true
 }
 
-func Read(file *os.File) (string, error) {
-	//if fi, err := file.Stat(); err == nil || fi.Size() == 0 {
-	//	return "empty file", err
-	//} else if err != nil {
-	//	return "", err
-	//}
-
+func Read(file *os.File) (*Game, error) {
 	if !isLogFile(file) {
-		return "not a log file", nil
+		return nil, errors.New("not a log file")
 	}
 
-	game, err := readGame(file)
+	game := newGame()
+
+	data, err := readGame(file)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	fmt.Println(game)
+	game.Data = data
 
 	for {
-		events, err := readEvent(file)
+		event, err := readEvent(file)
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return "", err
+			return nil, err
 		}
-		fmt.Println(events)
+		game.appendEvent(event)
 	}
-	return "log file", nil
+	return game, nil
 }
 
 func readMessage(reader io.Reader) ([]byte, error) {
