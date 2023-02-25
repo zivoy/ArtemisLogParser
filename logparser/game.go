@@ -52,18 +52,22 @@ func (g *Game) appendEvent(events *pb.AnalyticsEvent) {
 				event := g.Events[i].Event
 				switch event.GetEvent().(type) {
 				case *pb.AnalyticsEvent_Event_Object:
-					lastObject = event.GetObject()
+					obj := event.GetObject()
+					if obj.GetId() != object.GetId() {
+						continue
+					}
+					lastObject = obj
 					i = -1 // break from loop
 				}
 			}
 
-			if object.GetPosition() == nil {
+			if object.GetPosition() == nil && lastObject != nil {
 				object.Position = lastObject.Position
 			}
-			if object.GetRotation() == nil {
+			if object.GetRotation() == nil && lastObject != nil {
 				object.Rotation = lastObject.Rotation
 			}
-			if object.GetScripts() == nil {
+			if object.GetScripts() == nil && lastObject != nil && lastObject.GetScripts() != nil {
 				object.Scripts = lastObject.Scripts
 			}
 			// todo updated lookup
