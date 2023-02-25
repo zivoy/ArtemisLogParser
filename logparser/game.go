@@ -40,20 +40,20 @@ func newData(game *pb.Game) *Data {
 }
 
 func (g *Game) appendEvent(events *pb.AnalyticsEvent) {
+	eventTime := time.UnixMilli(events.GetEventTine())
 	for _, e := range events.GetEvents() {
-		eventTime := time.UnixMilli(events.GetEventTine())
 		g.Events = append(g.Events, &Event{Time: eventTime, Event: e, game: g})
 
 		switch e.GetEvent().(type) {
 		case *pb.AnalyticsEvent_Event_Object:
 			object := e.GetObject()
 			var lastObject *pb.ObjectEvent
-			for i := len(g.Events) - 1; i > 0; i-- {
+			for i := len(g.Events) - 2; i > 0; i-- {
 				event := g.Events[i].Event
 				switch event.GetEvent().(type) {
 				case *pb.AnalyticsEvent_Event_Object:
 					lastObject = event.GetObject()
-					break
+					i = -1 // break from loop
 				}
 			}
 
