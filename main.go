@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+// todo write profiler cases
+
 func main() {
 	args := os.Args[1:]
 	if len(args) == 0 {

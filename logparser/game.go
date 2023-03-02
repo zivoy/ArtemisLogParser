@@ -79,6 +79,10 @@ func (g *Game) appendEvent(events *pb.AnalyticsEvent) {
 		case *pb.AnalyticsEvent_Event_Custom:
 		case *pb.AnalyticsEvent_Event_Device:
 		case *pb.AnalyticsEvent_Event_Map:
+
+		case *pb.AnalyticsEvent_Event_Death:
+		case *pb.AnalyticsEvent_Event_Respawn:
+		case *pb.AnalyticsEvent_Event_Health:
 		}
 	}
 }
@@ -146,6 +150,19 @@ func (e *Event) String() string {
 	case *pb.AnalyticsEvent_Event_Map:
 		mapE := e.Event.GetMap()
 		event = fmt.Sprintf("Map set to %s", mapE.GetMapName())
+
+	case *pb.AnalyticsEvent_Event_Death:
+		death := e.Event.GetDeath()
+		event = fmt.Sprintf("%s died", e.game.LookupID(death.GetId()))
+	case *pb.AnalyticsEvent_Event_Respawn:
+		respawn := e.Event.GetRespawn()
+		event = fmt.Sprintf("%s respawned", e.game.LookupID(respawn.GetId()))
+	case *pb.AnalyticsEvent_Event_Health:
+		health := e.Event.GetHealth()
+		event = fmt.Sprintf("%s now has %f health", e.game.LookupID(health.GetId()), health.GetAmount())
+
+	default:
+		event = e.Event.String()
 	}
 
 	return fmt.Sprintf("t+%s - %s", e.Time.Sub(e.game.Data.Time), event)

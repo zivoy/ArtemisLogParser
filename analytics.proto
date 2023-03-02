@@ -20,6 +20,11 @@ message AnalyticsEvent {
       ObjectEvent object = 3;
       DeviceEvent device = 4;
       NewItemEvent item = 5;
+
+      // v1
+      RespawnEvent respawn = 6;
+      DeathEvent death = 7;
+      PlayerHealth health = 8;
     }
   }
   
@@ -38,6 +43,7 @@ message MapEvent {
   string mapName = 1;
 }
 
+// deprecated with v1
 message CustomEvent { // for stuff like player deaths
   string type = 1;
   bytes value = 2;
@@ -83,4 +89,19 @@ message Rotation {
   float x = 2;
   float y = 3;
   float z = 4;
+}
+
+
+// version 1
+message DeathEvent {
+  int32 id = 1;
+}
+
+message RespawnEvent {
+  int32 id = 1;
+}
+
+message PlayerHealth {
+  int32 id = 1;
+  float amount = 2;
 }
