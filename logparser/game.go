@@ -75,14 +75,7 @@ func (g *Game) appendEvent(events *pb.AnalyticsEvent) {
 		case *pb.AnalyticsEvent_Event_Item:
 			itemEvent := e.GetItem()
 			g.items[itemEvent.Id] = itemEvent.Name
-
-		case *pb.AnalyticsEvent_Event_Custom:
-		case *pb.AnalyticsEvent_Event_Device:
-		case *pb.AnalyticsEvent_Event_Map:
-
-		case *pb.AnalyticsEvent_Event_Death:
-		case *pb.AnalyticsEvent_Event_Respawn:
-		case *pb.AnalyticsEvent_Event_Health:
+		default:
 		}
 	}
 }
@@ -160,6 +153,12 @@ func (e *Event) String() string {
 	case *pb.AnalyticsEvent_Event_Health:
 		health := e.Event.GetHealth()
 		event = fmt.Sprintf("%s now has %f health", e.game.LookupID(health.GetId()), health.GetAmount())
+	case *pb.AnalyticsEvent_Event_Damage:
+		damage := e.Event.GetDamage()
+		event = fmt.Sprintf("%s was injured by %s", e.game.LookupID(damage.GetId()), e.game.LookupID(damage.GetDamager()))
+	case *pb.AnalyticsEvent_Event_Stock:
+		stock := e.Event.GetStock()
+		event = fmt.Sprintf("%s now has %d stock", e.game.LookupID(stock.GetId()), stock.GetStock())
 
 	default:
 		event = e.Event.String()
